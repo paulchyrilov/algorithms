@@ -2,6 +2,7 @@
 
 namespace Graphp\Algorithms\Tree;
 
+use Fhaculty\Graph\Exception\InvalidArgumentException;
 use Graphp\Algorithms\Tree\Base as Tree;
 use Fhaculty\Graph\Exception\UnderflowException;
 use Fhaculty\Graph\Exception\UnexpectedValueException;
@@ -132,7 +133,6 @@ class Undirected extends Tree
      * @throws UnexpectedValueException for directed edges
      * @return Vertices (might include possible duplicates)
      * @uses Vertex::getEdges()
-     * @uses Edge::getVertexToFrom()
      * @see Vertex::getVerticesEdge()
      */
     private function getVerticesNeighbor(Vertex $vertex)
@@ -143,7 +143,11 @@ class Undirected extends Tree
             if (!($edge instanceof UndirectedEdge)) {
                 throw new UnexpectedValueException('Directed edge encountered');
             }
-            $vertices[] = $edge->getVertexToFrom($vertex);
+            $vertexToFrom = $edge->getVertexToFrom($vertex);
+            if(null === $vertexToFrom) {
+                throw new InvalidArgumentException('Invalid start vertex');
+            }
+            $vertices[] = $vertexToFrom;
         }
         return new Vertices($vertices);
     }

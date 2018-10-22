@@ -97,14 +97,14 @@ abstract class Base extends BaseVertex
             $pre = NULL;
             // check all edges to search for edge that points TO current vertex
             foreach ($edges as $edge) {
-                try {
-                    // get start point of this edge (fails if current vertex is not its end point)
-                    $pre = $edge->getVertexFromTo($currentVertex);
-                    $path []= $edge;
-                    $currentVertex = $pre;
-                    break;
-                } catch (InvalidArgumentException $ignore) {
-                } // ignore: this edge does not point TO current vertex
+                // get start point of this edge (fails if current vertex is not its end point)
+                $pre = $edge->getVertexFromTo($currentVertex);
+                if(null === $pre) {
+                    continue;
+                }
+                $path []= $edge;
+                $currentVertex = $pre;
+                break;
             }
             if ($pre === NULL) {
                 throw new OutOfBoundsException('No edge leading to vertex');
